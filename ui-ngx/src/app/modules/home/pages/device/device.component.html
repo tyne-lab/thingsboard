@@ -58,6 +58,12 @@
           [fxShow]="!isEdit && deviceScope === 'edge'">
     {{ 'edge.unassign-from-edge' | translate }}
   </button>
+  <button mat-raised-button color="primary"
+          [disabled]="(isLoading$ | async)"
+          (click)="onEntityAction($event, 'downloadTelemetryData')"
+          [fxShow]="!isEdit">
+    {{'attribute.download-telemetry' | translate }}
+  </button>
   <button mat-raised-button color="primary" fxFlex.xs
           [disabled]="(isLoading$ | async)"
           (click)="onEntityAction($event, 'delete')"

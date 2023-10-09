@@ -658,7 +658,9 @@
         "selected-attributes": "{ count, plural, =1 {1 atributo} other {# atributos} } seleccionats",
         "selected-telemetry": "{ count, plural, =1 {1 telemetría} other {# telemetrías} } seleccionades",
         "no-attributes-text": "No és va trobar cap atribut",
-        "no-telemetry-text": "No és va trobar cap telemetria"
+        "no-telemetry-text": "No és va trobar cap telemetria",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "api-usage": {
         "api-usage": "Ús de API",

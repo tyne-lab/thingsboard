@@ -88,7 +88,7 @@
         "timeout-required": "Необхідно задати час очікування.",
         "timeout-invalid": "Це не схоже на правильний час очікування.",
         "enable-tls": "Увімкнути TLS",
-        "tls-version" : "Версія TLS",
+        "tls-version": "Версія TLS",
         "send-test-mail": "Надіслати тестове повідомлення",
         "use-system-mail-settings": "Використовувати параметри системного поштового сервера",
         "mail-templates": "Шаблони електронної пошти",
@@ -126,29 +126,29 @@
         "minimum-max-failed-login-attempts-range": "Максимальна кількість невдалих спроб входу не може бути негативною",
         "user-lockout-notification-email": "У разі блокування облікового запису користувача, надішліть сповіщення на електронну пошту",
         "smpp-provider": {
-          "smpp-version": "SMPP верія",
-          "smpp-host": "SMPP хост",
-          "smpp-host-required": "Хост SMPP обов'язковий.",
-          "smpp-port": "SMPP порт",
-          "smpp-port-required": "Порт SMPP обов'язковий.",
-          "system-id": "Id системи",
-          "system-id-required": "Id системи обязателен.",
-          "password": "Пароль",
-          "password-required": "Пароль обязателен.",
-          "type-settings": "Налаштування типів",
-          "source-settings": "Налаштування джерела",
-          "destination-settings": "Налаштування призначення",
-          "additional-settings": "Додаткові налаштування",
-          "system-type": "Тип системи",
-          "bind-type": "Тип зв'язування",
-          "service-type": "Тип обслуговування",
-          "source-address": "Адреса джерела",
-          "source-ton": "Тип номера джерела",
-          "source-npi": "Идентификация плана нумерации джерела",
-          "destination-ton": "Тип номера призначення",
-          "destination-npi": "Ідентифікація плану нумерації призначення",
-          "address-range": "Діапазон адрес",
-          "coding-scheme": "Схема кодування"
+            "smpp-version": "SMPP верія",
+            "smpp-host": "SMPP хост",
+            "smpp-host-required": "Хост SMPP обов'язковий.",
+            "smpp-port": "SMPP порт",
+            "smpp-port-required": "Порт SMPP обов'язковий.",
+            "system-id": "Id системи",
+            "system-id-required": "Id системи обязателен.",
+            "password": "Пароль",
+            "password-required": "Пароль обязателен.",
+            "type-settings": "Налаштування типів",
+            "source-settings": "Налаштування джерела",
+            "destination-settings": "Налаштування призначення",
+            "additional-settings": "Додаткові налаштування",
+            "system-type": "Тип системи",
+            "bind-type": "Тип зв'язування",
+            "service-type": "Тип обслуговування",
+            "source-address": "Адреса джерела",
+            "source-ton": "Тип номера джерела",
+            "source-npi": "Идентификация плана нумерации джерела",
+            "destination-ton": "Тип номера призначення",
+            "destination-npi": "Ідентифікація плану нумерації призначення",
+            "address-range": "Діапазон адрес",
+            "coding-scheme": "Схема кодування"
         }
     },
     "alarm": {
@@ -365,7 +365,9 @@
         "add-to-dashboard": "Додати до інформаційної панелі",
         "add-widget-to-dashboard": "Додати віджет до інформаційної панелі",
         "selected-attributes": "{ count, plural, =1 {1 attribute} other {# attributes} } selected ...вибрані вибрати",
-        "selected-telemetry": "{ count, plural, =1 {1 telemetry unit} other {# telemetry units} } selected"
+        "selected-telemetry": "{ count, plural, =1 {1 telemetry unit} other {# telemetry units} } selected",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "audit-log": {
         "audit": "Операція",
@@ -2003,9 +2005,9 @@
         "timezone-required": "Необхідно вказати часовий пояс."
     },
     "queue": {
-      "select_name": "Виберіть ім'я для Queue",
-      "name": "Iм'я для Queue",
-      "name_required": "Поле 'Имя для Queue' обязательно к заполнению!"
+        "select_name": "Виберіть ім'я для Queue",
+        "name": "Iм'я для Queue",
+        "name_required": "Поле 'Имя для Queue' обязательно к заполнению!"
     },
     "tenant": {
         "tenant": "Власник",
@@ -2480,7 +2482,7 @@
             "row-double-click": "Дії при подвійному натисканні на рядок"
         }
     },
-    "paginator" : {
+    "paginator": {
         "items-per-page": "Елементів на сторінці:",
         "first-page-label": "Перша сторінка",
         "last-page-label": "Остання сторінка",

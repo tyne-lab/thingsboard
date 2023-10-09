@@ -307,7 +307,9 @@
         "add-to-dashboard": "Adaugă în panou",
         "add-widget-to-dashboard": "Adaugă Widget În Panou",
         "selected-attributes": "{ count, plural, =1 {un atribut} other {# atribute} } selectate",
-        "selected-telemetry": "{ count, plural, =1 {o unitate telemetrică} other {# unităţi telemetrice} } selectate"
+        "selected-telemetry": "{ count, plural, =1 {o unitate telemetrică} other {# unităţi telemetrice} } selectate",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "audit-log": {
         "audit": "Audit",

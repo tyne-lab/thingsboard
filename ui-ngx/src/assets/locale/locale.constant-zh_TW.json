@@ -544,7 +544,9 @@
         "selected-attributes": "{ count, plural, =1 {1 屬性} other {# 屬性} } 被選中",
         "selected-telemetry": "{ count, plural, =1 {1 遙測} other {# 遙測} }被選中",
         "no-attributes-text": "找不到屬性",
-        "no-telemetry-text": "找不到遙測"
+        "no-telemetry-text": "找不到遙測",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "api-usage": {
         "api-usage": "api使用狀態",

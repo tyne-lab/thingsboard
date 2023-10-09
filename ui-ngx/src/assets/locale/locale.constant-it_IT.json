@@ -84,7 +84,7 @@
         "timeout-required": "Timeout obbligatorio.",
         "timeout-invalid": "Timeout non valido.",
         "enable-tls": "Abilita TLS",
-        "tls-version" : "Versione TLS",
+        "tls-version": "Versione TLS",
         "send-test-mail": "Invia mail di test",
         "security-settings": "Settaggi di sicurezza",
         "password-policy": "Politica password",
@@ -298,7 +298,9 @@
         "add-to-dashboard": "Aggiungi alla dashboard",
         "add-widget-to-dashboard": "Aggiungi widget alla dashboard",
         "selected-attributes": "{ count, plural, =1 {1 attributo selezionato} other {# attributi selezionati} }",
-        "selected-telemetry": "{ count, plural, =1 {1 unità di telemetria selezionata} other {# unità di telemetria selezionate} }"
+        "selected-telemetry": "{ count, plural, =1 {1 unità di telemetria selezionata} other {# unità di telemetria selezionate} }",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "audit-log": {
         "audit": "Audit",
