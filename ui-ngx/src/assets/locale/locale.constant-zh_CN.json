@@ -694,7 +694,9 @@
         "no-attributes-text": "未找到属性",
         "no-telemetry-text": "未找到遥测数据",
         "copy-key": "复制键",
-        "copy-value": "复制值"
+        "copy-value": "复制值",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "api-usage": {
         "api-features": "Api统计",

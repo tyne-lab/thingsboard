@@ -16,20 +16,12 @@
 
 import { Injectable } from '@angular/core';
 
-import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import {
-  CellActionDescriptor,
-  checkBoxCell,
-  DateEntityTableColumn,
-  EntityTableColumn,
-  EntityTableConfig,
-  GroupActionDescriptor,
-  HeaderActionDescriptor
-} from '@home/models/entity/entities-table-config.models';
-import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
-import { EntityType, entityTypeResources, entityTypeTranslations } from '@shared/models/entity-type.models';
-import { AddEntityDialogData, EntityAction } from '@home/models/entity/entity-component.models';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import { DeviceService } from '@app/core/http/device.service';
+import { Authority } from '@app/shared/models/authority.enum';
+import { Customer } from '@app/shared/models/customer.model';
 import {
   Device,
   DeviceCredentials,
@@ -37,53 +29,62 @@ import {
   DeviceInfoFilter,
   DeviceInfoQuery
 } from '@app/shared/models/device.models';
-import { DeviceComponent } from '@modules/home/pages/device/device.component';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { select, Store } from '@ngrx/store';
-import { selectAuthUser, selectUserSettingsProperty } from '@core/auth/auth.selectors';
-import { map, mergeMap, take, tap } from 'rxjs/operators';
-import { AppState } from '@core/core.state';
-import { DeviceService } from '@app/core/http/device.service';
-import { Authority } from '@app/shared/models/authority.enum';
-import { CustomerService } from '@core/http/customer.service';
-import { Customer } from '@app/shared/models/customer.model';
-import { NULL_UUID } from '@shared/models/id/has-uuid';
-import { BroadcastService } from '@core/services/broadcast.service';
-import { DeviceTableHeaderComponent } from '@modules/home/pages/device/device-table-header.component';
-import { MatDialog } from '@angular/material/dialog';
-import {
-  DeviceCredentialsDialogComponent,
-  DeviceCredentialsDialogData
-} from '@modules/home/pages/device/device-credentials-dialog.component';
-import { DialogService } from '@core/services/dialog.service';
-import {
-  AssignToCustomerDialogComponent,
-  AssignToCustomerDialogData
-} from '@modules/home/dialogs/assign-to-customer-dialog.component';
 import { DeviceId } from '@app/shared/models/id/device-id';
-import {
-  AddEntitiesToCustomerDialogComponent,
-  AddEntitiesToCustomerDialogData
-} from '../../dialogs/add-entities-to-customer-dialog.component';
-import { DeviceTabsComponent } from '@home/pages/device/device-tabs.component';
-import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
-import { DeviceWizardDialogComponent } from '@home/components/wizard/device-wizard-dialog.component';
-import { BaseData, HasId } from '@shared/models/base-data';
-import { deepClone, isDefined, isDefinedAndNotNull } from '@core/utils';
+import { selectAuthUser, selectUserSettingsProperty } from '@core/auth/auth.selectors';
+import { AppState } from '@core/core.state';
+import { CustomerService } from '@core/http/customer.service';
 import { EdgeService } from '@core/http/edge.service';
+import { BroadcastService } from '@core/services/broadcast.service';
+import { DialogService } from '@core/services/dialog.service';
+import { deepClone, isDefined, isDefinedAndNotNull } from '@core/utils';
+import { DeviceWizardDialogComponent } from '@home/components/wizard/device-wizard-dialog.component';
 import {
   AddEntitiesToEdgeDialogComponent,
   AddEntitiesToEdgeDialogData
 } from '@home/dialogs/add-entities-to-edge-dialog.component';
-import { EdgeId } from '@shared/models/id/edge-id';
-import { CustomerId } from '@shared/models/id/customer-id';
-import { PageLink, PageQueryParam } from '@shared/models/page/page-link';
-import { DeviceProfileId } from '@shared/models/id/device-profile-id';
+import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
+import {
+  CellActionDescriptor,
+  DateEntityTableColumn,
+  EntityTableColumn,
+  EntityTableConfig,
+  GroupActionDescriptor,
+  HeaderActionDescriptor,
+  checkBoxCell
+} from '@home/models/entity/entities-table-config.models';
+import { AddEntityDialogData, EntityAction } from '@home/models/entity/entity-component.models';
 import {
   DeviceCheckConnectivityDialogComponent,
   DeviceCheckConnectivityDialogData
 } from '@home/pages/device/device-check-connectivity-dialog.component';
+import { DeviceTabsComponent } from '@home/pages/device/device-tabs.component';
+import {
+  AssignToCustomerDialogComponent,
+  AssignToCustomerDialogData
+} from '@modules/home/dialogs/assign-to-customer-dialog.component';
+import {
+  DeviceCredentialsDialogComponent,
+  DeviceCredentialsDialogData
+} from '@modules/home/pages/device/device-credentials-dialog.component';
+import { DeviceTableHeaderComponent } from '@modules/home/pages/device/device-table-header.component';
+import { DeviceComponent } from '@modules/home/pages/device/device.component';
+import { Store, select } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { BaseData, HasId } from '@shared/models/base-data';
+import { EntityType, entityTypeResources, entityTypeTranslations } from '@shared/models/entity-type.models';
+import { CustomerId } from '@shared/models/id/customer-id';
+import { DeviceProfileId } from '@shared/models/id/device-profile-id';
+import { EdgeId } from '@shared/models/id/edge-id';
 import { EntityId } from '@shared/models/id/entity-id';
+import { NULL_UUID } from '@shared/models/id/has-uuid';
+import { PageLink, PageQueryParam } from '@shared/models/page/page-link';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
+import { map, mergeMap, take, tap } from 'rxjs/operators';
+import {
+  AddEntitiesToCustomerDialogComponent,
+  AddEntitiesToCustomerDialogData
+} from '../../dialogs/add-entities-to-customer-dialog.component';
+import { DeviceDownloadTelemetryDataDialogComponent, DeviceDownloadTelemetryDataDialogData } from './device-download-telemetry-data-dialog.component';
 
 interface DevicePageQueryParams extends PageQueryParam {
   deviceProfileId?: string;
@@ -647,6 +648,10 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       case 'checkConnectivity':
         this.checkConnectivity(action.event, action.entity.id);
         return true;
+      case 'downloadTelemetryData':
+        this.downloadTelemetryData(action.event, action.entity);
+        return true;
+
     }
     return false;
   }
@@ -740,5 +745,23 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
           this.config.updateData();
         }
       });
+  }
+
+  downloadTelemetryData($event: Event, device: Device) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<
+      DeviceDownloadTelemetryDataDialogComponent,
+      DeviceDownloadTelemetryDataDialogData,
+      void
+    >(DeviceDownloadTelemetryDataDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        deviceId: device.id.id,
+        name: device.name
+      }
+    });
   }
 }

@@ -41,6 +41,13 @@ export class AttributeService {
     return this.http.get<Array<AttributeData>>(url, defaultHttpOptionsFromConfig(config));
   }
 
+  public getEntityTimeSeriesKeys(entityId: EntityId, config?: RequestConfig): Observable<Array<string>> {
+    return this.http.get<Array<string>>(
+      `/api/plugins/telemetry/${entityId.entityType}/${entityId.id}/keys/timeseries`,
+      defaultHttpOptionsFromConfig(config),
+    );
+  }
+
   public deleteEntityAttributes(entityId: EntityId, attributeScope: AttributeScope, attributes: Array<AttributeData>,
                                 config?: RequestConfig): Observable<any> {
     const keys = attributes.map(attribute => encodeURIComponent(attribute.key)).join(',');

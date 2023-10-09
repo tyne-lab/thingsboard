@@ -14,36 +14,61 @@
 /// limitations under the License.
 ///
 
-import { Inject, Injectable } from '@angular/core';
-import { DashboardService } from '@core/http/dashboard.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngrx/store';
-import { AppState } from '@core/core.state';
-import { ActionNotificationShow } from '@core/notification/notification.actions';
-import { Dashboard, DashboardLayoutId } from '@shared/models/dashboard.models';
-import { deepClone, guid, isDefined, isObject, isString, isUndefined } from '@core/utils';
-import { WINDOW } from '@core/services/window.service';
 import { DOCUMENT } from '@angular/common';
-import {
-  AliasesInfo,
-  AliasFilterType,
-  EntityAlias,
-  EntityAliases,
-  EntityAliasFilter,
-  EntityAliasInfo
-} from '@shared/models/alias.models';
+import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ImportDialogComponent, ImportDialogData } from '@home/components/import-export/import-dialog.component';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { DashboardUtilsService } from '@core/services/dashboard-utils.service';
+import { AppState } from '@core/core.state';
+import { AssetProfileService } from '@core/http/asset-profile.service';
+import { AssetService } from '@core/http/asset.service';
+import { DashboardService } from '@core/http/dashboard.service';
+import { DeviceProfileService } from '@core/http/device-profile.service';
+import { DeviceService } from '@core/http/device.service';
+import { EdgeService } from '@core/http/edge.service';
 import { EntityService } from '@core/http/entity.service';
-import { Widget, WidgetSize, WidgetType, WidgetTypeDetails } from '@shared/models/widget.models';
+import { RequestConfig } from '@core/http/http-utils';
+import { RuleChainService } from '@core/http/rule-chain.service';
+import { TenantProfileService } from '@core/http/tenant-profile.service';
+import { WidgetService } from '@core/http/widget.service';
+import { ActionNotificationShow } from '@core/notification/notification.actions';
+import { DashboardUtilsService } from '@core/services/dashboard-utils.service';
+import { ItemBufferService, WidgetItem } from '@core/services/item-buffer.service';
+import { UtilsService } from '@core/services/utils.service';
+import { WINDOW } from '@core/services/window.service';
+import { deepClone, guid, isDefined, isObject, isString, isUndefined } from '@core/utils';
 import {
   EntityAliasesDialogComponent,
   EntityAliasesDialogData
 } from '@home/components/alias/entity-aliases-dialog.component';
-import { ItemBufferService, WidgetItem } from '@core/services/item-buffer.service';
+import {
+  ExportWidgetsBundleDialogComponent,
+  ExportWidgetsBundleDialogData,
+  ExportWidgetsBundleDialogResult
+} from '@home/components/import-export/export-widgets-bundle-dialog.component';
+import { ImportDialogComponent, ImportDialogData } from '@home/components/import-export/import-dialog.component';
+import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  AliasFilterType,
+  AliasesInfo,
+  EntityAlias,
+  EntityAliasFilter,
+  EntityAliasInfo,
+  EntityAliases
+} from '@shared/models/alias.models';
+import { AssetProfile } from '@shared/models/asset.models';
+import { Dashboard, DashboardLayoutId } from '@shared/models/dashboard.models';
+import { DeviceProfile } from '@shared/models/device.models';
+import { EntityType } from '@shared/models/entity-type.models';
+import { ImportEntitiesResultInfo, ImportEntityData } from '@shared/models/entity.models';
+import { FiltersInfo } from '@shared/models/query/query.models';
+import { RuleChain, RuleChainImport, RuleChainMetaData, RuleChainType } from '@shared/models/rule-chain.models';
+import { RuleNode } from '@shared/models/rule-node.models';
+import { TenantProfile } from '@shared/models/tenant.model';
+import { Widget, WidgetSize, WidgetType, WidgetTypeDetails } from '@shared/models/widget.models';
+import { WidgetsBundle } from '@shared/models/widgets-bundle.model';
+import moment from 'moment';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import {
   BulkImportRequest,
   BulkImportResult,
@@ -55,30 +80,6 @@ import {
   WidgetsBundleItem,
   ZIP_TYPE
 } from './import-export.models';
-import { EntityType } from '@shared/models/entity-type.models';
-import { UtilsService } from '@core/services/utils.service';
-import { WidgetService } from '@core/http/widget.service';
-import { WidgetsBundle } from '@shared/models/widgets-bundle.model';
-import { ImportEntitiesResultInfo, ImportEntityData } from '@shared/models/entity.models';
-import { RequestConfig } from '@core/http/http-utils';
-import { RuleChain, RuleChainImport, RuleChainMetaData, RuleChainType } from '@shared/models/rule-chain.models';
-import { RuleChainService } from '@core/http/rule-chain.service';
-import { FiltersInfo } from '@shared/models/query/query.models';
-import { DeviceProfileService } from '@core/http/device-profile.service';
-import { DeviceProfile } from '@shared/models/device.models';
-import { TenantProfile } from '@shared/models/tenant.model';
-import { TenantProfileService } from '@core/http/tenant-profile.service';
-import { DeviceService } from '@core/http/device.service';
-import { AssetService } from '@core/http/asset.service';
-import { EdgeService } from '@core/http/edge.service';
-import { RuleNode } from '@shared/models/rule-node.models';
-import { AssetProfileService } from '@core/http/asset-profile.service';
-import { AssetProfile } from '@shared/models/asset.models';
-import {
-  ExportWidgetsBundleDialogComponent,
-  ExportWidgetsBundleDialogData,
-  ExportWidgetsBundleDialogResult
-} from '@home/components/import-export/export-widgets-bundle-dialog.component';
 
 // @dynamic
 @Injectable()
@@ -1108,4 +1109,63 @@ export class ImportExportService {
     return exportedData;
   }
 
+  private exportDevicesTelemetryDataCsv(filename: string, devicesData: { name: string, keys: string[], data: any }[]) {
+    const mapTsToData = new Map<number, any>();
+    devicesData.forEach((deviceData, index) => {
+      deviceData.keys.forEach((key) => {
+        deviceData.data[key]?.forEach((timeNode: { ts: number, value: string }) => {
+          const ts = timeNode.ts;
+          if (mapTsToData.has(ts)) {
+            const tsData = mapTsToData.get(ts);
+            if (tsData[index] === undefined) {
+              tsData[index] = {};
+            }
+            tsData[index][key] = timeNode.value ?? '';
+            mapTsToData.set(ts, tsData);
+          } else {
+            mapTsToData.set(ts, {
+              'Timestamp': ts,
+              'Date time': moment(ts).format("YYYY-MM-DD HH:mm:ss"),
+              [index]: { [key]: timeNode.value ?? '' }
+            });
+          }
+        });  
+      });
+    });
+    
+    const nameHead = ['', '']
+      .concat(...devicesData.map((device) => {
+        if (!device.keys.length) return [];
+        const array = Array(device.keys.length);
+        array[0] = device.name;
+        return array;
+      }))
+      .join(';');
+    const colsHead = ['Timestamp', 'Date time']
+      .concat(...devicesData.map((device) => device.keys))
+      .join(';');
+    const mapTsKeys = Array.from(mapTsToData.keys()).sort();
+    const colsData = mapTsKeys.map((ts) => {
+      const tsData = mapTsToData.get(ts);
+      return [this.processCSVCell(tsData['Timestamp']), this.processCSVCell(tsData['Date time'])]
+        .concat(
+          ...devicesData.map((deviceData, index) => {
+            const data = [];
+            deviceData.keys.forEach((key) => {
+              data.push(this.processCSVCell(tsData[index]?.[key] ?? ''));
+            });
+            return data;
+          })
+        )
+        .join(';');
+    }).join('\n');
+
+    const csvData = `${nameHead}\n${colsHead}\n${colsData}`;
+    this.downloadFile(csvData, filename, CSV_TYPE);
+  }
+
+  public exportDevicesTelemetryData(fileName: string, devicesData: { name: string, keys: string[], data: any }[]) {
+    const name = fileName.replace(/\W/g, '_');
+    this.exportDevicesTelemetryDataCsv(name, devicesData);
+  }
 }

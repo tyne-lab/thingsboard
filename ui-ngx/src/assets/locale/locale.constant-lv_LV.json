@@ -278,7 +278,9 @@
         "add-to-dashboard": "Pievienot panelim",
         "add-widget-to-dashboard": "Pievienot logrīku panelim",
         "selected-attributes": "{ count, plural, =1 {1 attribute} other {# atribūtus} } izvēlētajam",
-        "selected-telemetry": "{ count, plural, =1 {1 telemetry unit} other {# telemetrijas vienības} } izvēlētas"
+        "selected-telemetry": "{ count, plural, =1 {1 telemetry unit} other {# telemetrijas vienības} } izvēlētas",
+        "download-telemetry": "Download telemetry data",
+        "limit": "Limit"
     },
     "audit-log": {
         "audit": "Audits",
@@ -1307,7 +1309,7 @@
         "custom-link-label-required": "Klienta saites etiķete ir nepieciešama.",
         "link-labels": "Saites etiķetes",
         "link-labels-required": "Saites etiķetes ir nepieciešamas.",
-        "no-link-labels-found":"Nav saites etiķetes atrastas",
+        "no-link-labels-found": "Nav saites etiķetes atrastas",
         "no-link-label-matching": "'{{label}}' nav atrasta.",
         "create-new-link-label": "Radīt jaunu!",
         "type-filter": "Filtrs",
