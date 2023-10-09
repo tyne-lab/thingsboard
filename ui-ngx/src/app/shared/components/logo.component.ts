@@ -23,10 +23,9 @@ import { Component } from '@angular/core';
 })
 export class LogoComponent {
 
-  logo = 'assets/logo_title_white.svg';
+  logo = 'assets/logo_title_white.png';
 
-  gotoThingsboard(): void {
-    window.open('https://thingsboard.io', '_blank');
+  gotoTyne(): void {
+    window.open('https://tyne.vn', '_blank');
   }
-
 }

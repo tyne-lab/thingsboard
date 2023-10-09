@@ -1,23 +1,38 @@
-*.toDelete
-output/**
-*.class
-*~
-*.iml
-*/.idea/**
-.idea/**
+# ide
 .idea
-*.log
-*.log.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
-*/.classpath
-.classpath
-*/.project
-.project
-.cache/**
-target/
+.idea/**
+*/.idea/**
+
+# build
 build/
+target/
+output/**
+**/build
+**/target
+
+*.class
+*/.classpath
+*/.project
+.classpath
+.project
+
+# temp
 tmp_deb_control/
 tmp_rpm_control/
 tmp_sh/
+.cache/**
+
+# logs
+*.log
+*.log.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
+
+# env
+**/.env
+**/*.env
+
+*.toDelete
+*~
+*.iml
 .gwt/
 .settings/
 /bin
@@ -27,11 +42,8 @@ pom.xml.versionsBackup
 .DS_Store
 **/.gradle
 **/local.properties
-**/build
-**/target
 **/Californium.properties
 **/Californium3.properties
-**/.env
 .instance_id
 rebuild-docker.sh
 */.run/**
