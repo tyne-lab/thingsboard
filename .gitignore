@@ -23,8 +23,12 @@ tmp_sh/
 .cache/**
 
 # logs
+logs/
 *.log
 *.log.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
+
+#data
+data/
 
 # env
 **/.env
