@@ -24,7 +24,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         restart: always
     thingsboard:
-        image: 'xuantruonglk02/thingsboard:3.6.0'
+        image: 'xuantruonglk02/thingsboard:3.6.1'
         depends_on:
             - kafka
         ports:
