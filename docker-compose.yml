@@ -1,28 +1,28 @@
 version: '3.0'
 services:
-    zookeeper:
-        image: 'zookeeper:3.5'
-        ports:
-            - '2181:2181'
-        environment:
-            ZOO_MY_ID: 1
-            ZOO_SERVERS: server.1=zookeeper:2888:3888;zookeeper:2181
-        restart: always
-    kafka:
-        image: wurstmeister/kafka
-        depends_on:
-            - zookeeper
-        ports:
-            - '9092:9092'
-        environment:
-            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_LISTENERS: INSIDE://:9093,OUTSIDE://:9092
-            KAFKA_ADVERTISED_LISTENERS: INSIDE://:9093,OUTSIDE://kafka:9092
-            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-            KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-        restart: always
+    # zookeeper:
+    #     image: 'zookeeper:3.5'
+    #     ports:
+    #         - '2181:2181'
+    #     environment:
+    #         ZOO_MY_ID: 1
+    #         ZOO_SERVERS: server.1=zookeeper:2888:3888;zookeeper:2181
+    #     restart: always
+    # kafka:
+    #     image: wurstmeister/kafka
+    #     depends_on:
+    #         - zookeeper
+    #     ports:
+    #         - '9092:9092'
+    #     environment:
+    #         KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    #         KAFKA_LISTENERS: INSIDE://:9093,OUTSIDE://:9092
+    #         KAFKA_ADVERTISED_LISTENERS: INSIDE://:9093,OUTSIDE://kafka:9092
+    #         KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+    #         KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    #     volumes:
+    #         - /var/run/docker.sock:/var/run/docker.sock
+    #     restart: always
     thingsboard:
         image: 'xuantruonglk02/thingsboard:3.6.0'
         depends_on:
@@ -34,8 +34,9 @@ services:
             - '5683-5688:5683-5688/udp'
             - '5432:5432'
         environment:
-            TB_QUEUE_TYPE: kafka
-            TB_KAFKA_SERVERS: kafka:9092
+            TB_QUEUE_TYPE: in-memory
+            # TB_QUEUE_TYPE: kafka
+            # TB_KAFKA_SERVERS: kafka:9092
         volumes:
             - ./data:/data
             - ./logs:/var/log/thingsboard
