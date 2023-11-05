@@ -17,7 +17,7 @@
 version: '3.0'
 services:
     thingsboard:
-        image: 'thingsboard/tb-postgres:3.6.1-SNAPSHOT'
+        image: 'xuantruonglk02/thingsboard:3.6.1-SNAPSHOT'
         ports:
             - '8080:9090'
             - '1883:1883'
