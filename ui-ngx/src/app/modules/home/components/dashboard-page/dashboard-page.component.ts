@@ -150,6 +150,10 @@ import { LayoutFixedSize, LayoutWidthType } from '@home/components/dashboard-pag
 import { TbPopoverComponent } from '@shared/components/popover.component';
 import { ResizeObserver } from '@juggle/resize-observer';
 import { HasDirtyFlag } from '@core/guards/confirm-on-exit.guard';
+import {
+  DashboardDownloadDevicesTelemetryDialogComponent,
+  DashboardDownloadDevicesTelemetryDialogData
+} from './dashboard-download-devices-telemetry-dialog.component';
 
 // @dynamic
 @Component({
@@ -791,6 +795,23 @@ export class DashboardPageComponent extends PageComponent implements IDashboardC
       $event.stopPropagation();
     }
     this.importExport.exportDashboard(this.currentDashboardId);
+  }
+
+  public downloadTelemetryData($event: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<
+      DashboardDownloadDevicesTelemetryDialogComponent,
+      DashboardDownloadDevicesTelemetryDialogData,
+      void
+    >(DashboardDownloadDevicesTelemetryDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        dashboardName: this.dashboard.name,
+      }
+    })
   }
 
   public openEntityAliases($event: Event) {
