@@ -182,6 +182,9 @@ import {
   ExportWidgetsBundleDialogComponent
 } from '@home/components/import-export/export-widgets-bundle-dialog.component';
 import { ScrollGridComponent } from '@home/components/grid/scroll-grid.component';
+import {
+  DashboardDownloadDevicesTelemetryDialogComponent
+} from '@home/components/dashboard-page/dashboard-download-devices-telemetry-dialog.component';
 
 @NgModule({
   declarations:
@@ -327,7 +330,8 @@ import { ScrollGridComponent } from '@home/components/grid/scroll-grid.component
       RateLimitsTextComponent,
       RateLimitsDetailsDialogComponent,
       SendNotificationButtonComponent,
-      ScrollGridComponent
+      ScrollGridComponent,
+      DashboardDownloadDevicesTelemetryDialogComponent
     ],
   imports: [
     CommonModule,

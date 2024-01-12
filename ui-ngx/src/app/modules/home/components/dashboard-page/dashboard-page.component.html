@@ -94,10 +94,10 @@
                   (click)="isFullscreen = !isFullscreen">
             <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
           </button>
-          <button [fxShow]="currentDashboardId && !isMobileApp && displayExport() && !isEdit" mat-icon-button
-                  matTooltip="{{'dashboard.export' | translate}}"
+          <button [fxShow]="currentDashboardId && !isMobileApp && !isEdit" mat-icon-button
+                  matTooltip="{{'attribute.download-telemetry' | translate}}"
                   matTooltipPosition="below"
-                  (click)="exportDashboard($event)">
+                  (click)="downloadTelemetryData($event)">
             <mat-icon>file_download</mat-icon>
           </button>
           <ng-container *ngIf="!readonly && !isEdit">

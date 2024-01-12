@@ -311,6 +311,7 @@ import * as AssetProfileComponent from '@home/components/profile/asset-profile.c
 import * as AssetProfileDialogComponent from '@home/components/profile/asset-profile-dialog.component';
 import * as AssetProfileAutocompleteComponent from '@home/components/profile/asset-profile-autocomplete.component';
 import * as RuleChainSelectComponent from '@shared/components/rule-chain/rule-chain-select.component';
+import * as DashboardDownloadDevicesTelemetryDialogComponent from '@home/components/dashboard-page/dashboard-download-devices-telemetry-dialog.component';
 
 import { IModulesMap } from '@modules/common/modules-map.models';
 
@@ -617,7 +618,8 @@ class ModulesMap implements IModulesMap {
     '@home/components/dashboard-page/dashboard-image-dialog.component': DashboardImageDialogComponent,
     '@home/components/widget/widget-container.component': WidgetContainerComponent,
     '@home/components/profile/queue/tenant-profile-queues.component': TenantProfileQueuesComponent,
-    '@home/components/queue/queue-form.component': QueueFormComponent
+    '@home/components/queue/queue-form.component': QueueFormComponent,
+    '@home/components/dashboard-page/dashboard-download-device-telemetries-dialog.component': DashboardDownloadDevicesTelemetryDialogComponent
   };
 
   init() {
