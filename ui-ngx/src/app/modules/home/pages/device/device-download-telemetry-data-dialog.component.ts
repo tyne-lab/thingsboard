@@ -59,6 +59,8 @@ export class DeviceDownloadTelemetryDataDialogComponent
 {
   downloadTelemetryFormGroup: UntypedFormGroup;
   loading = true;
+  
+  aggregations = Object.keys(AggregationType);
 
   constructor(
     protected store: Store<AppState>,
@@ -80,6 +82,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
     this.downloadTelemetryFormGroup = this.fb.group({
       keys: [null],
       timeRange: [null, [Validators.required]],
+      aggregation: [AggregationType.NONE, [Validators.required]],
       timezone: [null, [Validators.required]],
       limit: [100, [Validators.min(1)]],
     });
@@ -133,7 +136,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
         startTimeMs,
         endTimeMs,
         this.downloadTelemetryFormGroup.value.limit,
-        AggregationType.NONE,
+        this.downloadTelemetryFormGroup.value.aggregation,
         undefined,
         DataSortOrder.ASC
       )

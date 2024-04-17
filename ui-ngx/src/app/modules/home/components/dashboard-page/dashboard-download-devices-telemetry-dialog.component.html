@@ -97,6 +97,27 @@
         </mat-radio-group>
       </div>
 
+      <section fxFlex fxLayout="column">
+        <mat-form-field>
+          <mat-label translate>aggregation.function</mat-label>
+          <mat-select formControlName="aggregation" style="min-width: 150px;">
+            <mat-option *ngFor="let aggregation of aggregations" [value]="aggregation">
+              {{ aggregationTypesTranslations.get(aggregationTypes[aggregation]) | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <tb-timeinterval
+        *ngIf="downloadDeviceTelemetriesFormGroup.get('aggregation').value !== aggregationTypes.NONE"
+        formControlName="interval"
+        [isEdit]="isEdit"
+        [(hideFlag)]="timewindow.hideAggInterval"
+        (hideFlagChange)="onHideAggIntervalChanged()"
+        [min]="minHistoryAggInterval()" [max]="maxHistoryAggInterval()"
+        predefinedName="aggregation.group-interval">
+      </tb-timeinterval>
+
       <mat-form-field
         fxFlex
         class="mat-block"

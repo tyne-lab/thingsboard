@@ -27,8 +27,10 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AppState } from "@app/core/core.state";
-import { AttributeService } from "@app/core/public-api";
+import { AttributeService, TimeService } from "@app/core/public-api";
 import {
+  AggregationType,
+  DataSortOrder,
   DialogComponent,
   EntityType,
   calculateIntervalStartEndTime,
@@ -70,6 +72,9 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
   downloadDeviceTelemetriesFormGroup: UntypedFormGroup;
   loading = false;
 
+  aggregationTypes = AggregationType;
+  aggregations = Object.keys(AggregationType);
+
   constructor(
     private attributeService: AttributeService,
     private importExport: ImportExportService,
@@ -82,7 +87,8 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
     DashboardDownloadDevicesTelemetryDialogComponent,
       void
     >,
-    public fb: UntypedFormBuilder
+    public fb: UntypedFormBuilder,
+    private timeService: TimeService,
   ) {
     super(store, router, dialogRef);
   }
@@ -95,6 +101,8 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
         fixedTimewindow: [null],
         quickInterval: [null],
       }),
+      aggregation: [AggregationType.NONE, [Validators.required]],
+      interval: [null],
       timezone: [null, [Validators.required]],
       limit: [100, [Validators.min(1)]],
     });
@@ -162,7 +170,10 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
                   keysOfDevices[index],
                   startTimeMs,
                   endTimeMs,
-                  this.downloadDeviceTelemetriesFormGroup.value.limit
+                  this.downloadDeviceTelemetriesFormGroup.value.limit,
+                  this.downloadDeviceTelemetriesFormGroup.value.aggregation,
+                  undefined,
+                  DataSortOrder.ASC
                 )
                 .toPromise()
             : {}
@@ -184,5 +195,25 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
 
     this.loading = false;
     this.cancel();
+  }
+
+  minRealtimeAggInterval() {
+    return this.timeService.minIntervalLimit(this.currentRealtimeTimewindow());
+  }
+
+  maxRealtimeAggInterval() {
+    return this.timeService.maxIntervalLimit(this.currentRealtimeTimewindow());
+  }
+
+  currentRealtimeTimewindow(): number {
+    const timeWindowFormValue = this.timewindowForm.getRawValue();
+    switch (timeWindowFormValue.realtime.realtimeType) {
+      case RealtimeWindowType.LAST_INTERVAL:
+        return timeWindowFormValue.realtime.timewindowMs;
+      case RealtimeWindowType.INTERVAL:
+        return quickTimeIntervalPeriod(timeWindowFormValue.realtime.quickInterval);
+      default:
+        return DAY;
+    }
   }
 }
