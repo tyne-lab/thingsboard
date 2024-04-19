@@ -1,5 +1,5 @@
 ///
-/// Copyright © 2016-2023 The Thingsboard Authors
+/// Copyright © 2016-2024 The Thingsboard Authors
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
 /// you may not use this file except in compliance with the License.
@@ -27,7 +27,10 @@ import {
 } from '@home/components/widget/lib/settings/common/image-cards-select.component';
 import { FontSettingsComponent } from '@home/components/widget/lib/settings/common/font-settings.component';
 import { FontSettingsPanelComponent } from '@home/components/widget/lib/settings/common/font-settings-panel.component';
-import { ColorSettingsComponent } from '@home/components/widget/lib/settings/common/color-settings.component';
+import {
+  ColorSettingsComponent,
+  ColorSettingsComponentService
+} from '@home/components/widget/lib/settings/common/color-settings.component';
 import {
   ColorSettingsPanelComponent
 } from '@home/components/widget/lib/settings/common/color-settings-panel.component';
@@ -42,7 +45,88 @@ import {
 } from '@home/components/widget/lib/settings/common/background-settings-panel.component';
 import {
   CountWidgetSettingsComponent
-} from "@home/components/widget/lib/settings/common/count-widget-settings.component";
+} from '@home/components/widget/lib/settings/common/count-widget-settings.component';
+import { ColorRangeListComponent } from '@home/components/widget/lib/settings/common/color-range-list.component';
+import { ColorRangePanelComponent } from '@home/components/widget/lib/settings/common/color-range-panel.component';
+import {
+  ColorRangeSettingsComponent, ColorRangeSettingsComponentService
+} from '@home/components/widget/lib/settings/common/color-range-settings.component';
+import {
+  GetValueActionSettingsComponent
+} from '@home/components/widget/lib/settings/common/action/get-value-action-settings.component';
+import {
+  GetValueActionSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/action/get-value-action-settings-panel.component';
+import {
+  DeviceKeyAutocompleteComponent
+} from '@home/components/widget/lib/settings/control/device-key-autocomplete.component';
+import {
+  SetValueActionSettingsComponent
+} from '@home/components/widget/lib/settings/common/action/set-value-action-settings.component';
+import {
+  SetValueActionSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/action/set-value-action-settings-panel.component';
+import { CssSizeInputComponent } from '@home/components/widget/lib/settings/common/css-size-input.component';
+import { WidgetActionComponent } from '@home/components/widget/lib/settings/common/action/widget-action.component';
+import {
+  CustomActionPrettyResourcesTabsComponent
+} from '@home/components/widget/lib/settings/common/action/custom-action-pretty-resources-tabs.component';
+import {
+  CustomActionPrettyEditorComponent
+} from '@home/components/widget/lib/settings/common/action/custom-action-pretty-editor.component';
+import {
+  MobileActionEditorComponent
+} from '@home/components/widget/lib/settings/common/action/mobile-action-editor.component';
+import {
+  WidgetActionSettingsComponent
+} from '@home/components/widget/lib/settings/common/action/widget-action-settings.component';
+import {
+  WidgetActionSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/action/widget-action-settings-panel.component';
+import {
+  WidgetButtonAppearanceComponent
+} from '@home/components/widget/lib/settings/common/button/widget-button-appearance.component';
+import {
+  WidgetButtonCustomStyleComponent
+} from '@home/components/widget/lib/settings/common/button/widget-button-custom-style.component';
+import {
+  WidgetButtonCustomStylePanelComponent
+} from '@home/components/widget/lib/settings/common/button/widget-button-custom-style-panel.component';
+import {
+  TimeSeriesChartAxisSettingsComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-axis-settings.component';
+import {
+  TimeSeriesChartThresholdsPanelComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-thresholds-panel.component';
+import {
+  TimeSeriesChartThresholdRowComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-threshold-row.component';
+import { DataKeyInputComponent } from '@home/components/widget/lib/settings/common/data-key-input.component';
+import { EntityAliasInputComponent } from '@home/components/widget/lib/settings/common/entity-alias-input.component';
+import {
+  TimeSeriesChartThresholdSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-threshold-settings-panel.component';
+import {
+  TimeSeriesNoAggregationBarWidthSettingsComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-no-aggregation-bar-width-settings.component';
+import {
+  TimeSeriesChartYAxesPanelComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-y-axes-panel.component';
+import {
+  TimeSeriesChartYAxisRowComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-y-axis-row.component';
+import {
+  TimeSeriesChartYAxisSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-y-axis-settings-panel.component';
+import {
+  TimeSeriesChartAnimationSettingsComponent
+} from '@home/components/widget/lib/settings/common/chart/time-series-chart-animation-settings.component';
+import {
+  AutoDateFormatSettingsPanelComponent
+} from '@home/components/widget/lib/settings/common/auto-date-format-settings-panel.component';
+import {
+  AutoDateFormatSettingsComponent
+} from '@home/components/widget/lib/settings/common/auto-date-format-settings.component';
 
 @NgModule({
   declarations: [
@@ -53,14 +137,45 @@ import {
     ColorSettingsComponent,
     ColorSettingsPanelComponent,
     CssUnitSelectComponent,
+    CssSizeInputComponent,
     DateFormatSelectComponent,
     DateFormatSettingsPanelComponent,
+    AutoDateFormatSettingsComponent,
+    AutoDateFormatSettingsPanelComponent,
     BackgroundSettingsComponent,
     BackgroundSettingsPanelComponent,
     ValueSourceComponent,
     LegendConfigComponent,
     WidgetFontComponent,
-    CountWidgetSettingsComponent
+    CountWidgetSettingsComponent,
+    ColorRangeListComponent,
+    ColorRangePanelComponent,
+    ColorRangeSettingsComponent,
+    GetValueActionSettingsComponent,
+    GetValueActionSettingsPanelComponent,
+    DeviceKeyAutocompleteComponent,
+    SetValueActionSettingsComponent,
+    SetValueActionSettingsPanelComponent,
+    WidgetActionComponent,
+    CustomActionPrettyResourcesTabsComponent,
+    CustomActionPrettyEditorComponent,
+    MobileActionEditorComponent,
+    WidgetActionSettingsComponent,
+    WidgetActionSettingsPanelComponent,
+    WidgetButtonAppearanceComponent,
+    WidgetButtonCustomStyleComponent,
+    WidgetButtonCustomStylePanelComponent,
+    TimeSeriesChartAxisSettingsComponent,
+    TimeSeriesChartThresholdsPanelComponent,
+    TimeSeriesChartThresholdRowComponent,
+    TimeSeriesChartThresholdSettingsPanelComponent,
+    TimeSeriesNoAggregationBarWidthSettingsComponent,
+    TimeSeriesChartYAxesPanelComponent,
+    TimeSeriesChartYAxisRowComponent,
+    TimeSeriesChartYAxisSettingsPanelComponent,
+    TimeSeriesChartAnimationSettingsComponent,
+    DataKeyInputComponent,
+    EntityAliasInputComponent
   ],
   imports: [
     CommonModule,
@@ -75,14 +190,49 @@ import {
     ColorSettingsComponent,
     ColorSettingsPanelComponent,
     CssUnitSelectComponent,
+    CssSizeInputComponent,
     DateFormatSelectComponent,
     DateFormatSettingsPanelComponent,
+    AutoDateFormatSettingsComponent,
+    AutoDateFormatSettingsPanelComponent,
     BackgroundSettingsComponent,
     BackgroundSettingsPanelComponent,
     ValueSourceComponent,
     LegendConfigComponent,
     WidgetFontComponent,
-    CountWidgetSettingsComponent
+    CountWidgetSettingsComponent,
+    ColorRangeListComponent,
+    ColorRangePanelComponent,
+    ColorRangeSettingsComponent,
+    GetValueActionSettingsComponent,
+    GetValueActionSettingsPanelComponent,
+    DeviceKeyAutocompleteComponent,
+    SetValueActionSettingsComponent,
+    SetValueActionSettingsPanelComponent,
+    WidgetActionComponent,
+    CustomActionPrettyResourcesTabsComponent,
+    CustomActionPrettyEditorComponent,
+    MobileActionEditorComponent,
+    WidgetActionSettingsComponent,
+    WidgetActionSettingsPanelComponent,
+    WidgetButtonAppearanceComponent,
+    WidgetButtonCustomStyleComponent,
+    WidgetButtonCustomStylePanelComponent,
+    TimeSeriesChartAxisSettingsComponent,
+    TimeSeriesChartThresholdsPanelComponent,
+    TimeSeriesChartThresholdRowComponent,
+    TimeSeriesChartThresholdSettingsPanelComponent,
+    TimeSeriesNoAggregationBarWidthSettingsComponent,
+    TimeSeriesChartYAxesPanelComponent,
+    TimeSeriesChartYAxisRowComponent,
+    TimeSeriesChartYAxisSettingsPanelComponent,
+    TimeSeriesChartAnimationSettingsComponent,
+    DataKeyInputComponent,
+    EntityAliasInputComponent
+  ],
+  providers: [
+    ColorSettingsComponentService,
+    ColorRangeSettingsComponentService
   ]
 })
 export class WidgetSettingsCommonModule {

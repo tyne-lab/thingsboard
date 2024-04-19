@@ -1,5 +1,5 @@
 ///
-/// Copyright © 2016-2023 The Thingsboard Authors
+/// Copyright © 2016-2024 The Thingsboard Authors
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
 /// you may not use this file except in compliance with the License.
@@ -46,16 +46,9 @@ import { EntityFilterComponent } from '@home/components/entity/entity-filter.com
 import { RelationFiltersComponent } from '@home/components/relation/relation-filters.component';
 import { ManageWidgetActionsComponent } from '@home/components/widget/action/manage-widget-actions.component';
 import { WidgetActionDialogComponent } from '@home/components/widget/action/widget-action-dialog.component';
-import { CustomActionPrettyResourcesTabsComponent } from '@home/components/widget/action/custom-action-pretty-resources-tabs.component';
-import { CustomActionPrettyEditorComponent } from '@home/components/widget/action/custom-action-pretty-editor.component';
-import { MobileActionEditorComponent } from '@home/components/widget/action/mobile-action-editor.component';
 import { CustomDialogService } from '@home/components/widget/dialog/custom-dialog.service';
 import { CustomDialogContainerComponent } from '@home/components/widget/dialog/custom-dialog-container.component';
-import { ImportExportService } from '@home/components/import-export/import-export.service';
-import { ImportDialogComponent } from '@home/components/import-export/import-dialog.component';
 import { AddWidgetToDashboardDialogComponent } from '@home/components/attribute/add-widget-to-dashboard-dialog.component';
-import { ImportDialogCsvComponent } from '@home/components/import-export/import-dialog-csv.component';
-import { TableColumnsAssignmentComponent } from '@home/components/import-export/table-columns-assignment.component';
 import { EventContentDialogComponent } from '@home/components/event/event-content-dialog.component';
 import { SharedHomeComponentsModule } from '@home/components/shared-home-components.module';
 import { SelectTargetLayoutDialogComponent } from '@home/components/dashboard/select-target-layout-dialog.component';
@@ -179,10 +172,6 @@ import { WidgetConfigComponentsModule } from '@home/components/widget/config/wid
 import { BasicWidgetConfigModule } from '@home/components/widget/config/basic/basic-widget-config.module';
 import { DeleteTimeseriesPanelComponent } from '@home/components/attribute/delete-timeseries-panel.component';
 import {
-  ExportWidgetsBundleDialogComponent
-} from '@home/components/import-export/export-widgets-bundle-dialog.component';
-import { ScrollGridComponent } from '@home/components/grid/scroll-grid.component';
-import {
   DashboardDownloadDevicesTelemetryDialogComponent
 } from '@home/components/dashboard-page/dashboard-download-devices-telemetry-dialog.component';
 
@@ -229,17 +218,10 @@ import {
       ManageWidgetActionsComponent,
       WidgetActionDialogComponent,
       ManageWidgetActionsDialogComponent,
-      CustomActionPrettyResourcesTabsComponent,
-      CustomActionPrettyEditorComponent,
-      MobileActionEditorComponent,
       CustomDialogContainerComponent,
-      ImportDialogComponent,
-      ImportDialogCsvComponent,
-      ExportWidgetsBundleDialogComponent,
       SelectTargetLayoutDialogComponent,
       SelectTargetStateDialogComponent,
       AddWidgetToDashboardDialogComponent,
-      TableColumnsAssignmentComponent,
       BooleanFilterPredicateComponent,
       StringFilterPredicateComponent,
       NumericFilterPredicateComponent,
@@ -329,9 +311,8 @@ import {
       RateLimitsComponent,
       RateLimitsTextComponent,
       RateLimitsDetailsDialogComponent,
-      SendNotificationButtonComponent,
-      ScrollGridComponent,
-      DashboardDownloadDevicesTelemetryDialogComponent
+      DashboardDownloadDevicesTelemetryDialogComponent,
+      SendNotificationButtonComponent
     ],
   imports: [
     CommonModule,
@@ -376,14 +357,7 @@ import {
     ManageWidgetActionsComponent,
     WidgetActionDialogComponent,
     ManageWidgetActionsDialogComponent,
-    CustomActionPrettyResourcesTabsComponent,
-    CustomActionPrettyEditorComponent,
-    MobileActionEditorComponent,
     CustomDialogContainerComponent,
-    ImportDialogComponent,
-    ImportDialogCsvComponent,
-    ExportWidgetsBundleDialogComponent,
-    TableColumnsAssignmentComponent,
     SelectTargetLayoutDialogComponent,
     SelectTargetStateDialogComponent,
     BooleanFilterPredicateComponent,
@@ -469,13 +443,11 @@ import {
     RateLimitsComponent,
     RateLimitsTextComponent,
     RateLimitsDetailsDialogComponent,
-    SendNotificationButtonComponent,
-    ScrollGridComponent
+    SendNotificationButtonComponent
   ],
   providers: [
     WidgetComponentService,
     CustomDialogService,
-    ImportExportService,
     {provide: EMBED_DASHBOARD_DIALOG_TOKEN, useValue: EmbedDashboardDialogComponent},
     {provide: COMPLEX_FILTER_PREDICATE_DIALOG_COMPONENT_TOKEN, useValue: ComplexFilterPredicateDialogComponent},
     {provide: DASHBOARD_PAGE_COMPONENT_TOKEN, useValue: DashboardPageComponent},

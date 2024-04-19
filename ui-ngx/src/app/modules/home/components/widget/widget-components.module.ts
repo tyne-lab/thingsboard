@@ -1,5 +1,5 @@
 ///
-/// Copyright © 2016-2023 The Thingsboard Authors
+/// Copyright © 2016-2024 The Thingsboard Authors
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
 /// you may not use this file except in compliance with the License.
@@ -61,6 +61,22 @@ import { BatteryLevelWidgetComponent } from '@home/components/widget/lib/indicat
 import {
   WindSpeedDirectionWidgetComponent
 } from '@home/components/widget/lib/weather/wind-speed-direction-widget.component';
+import { SignalStrengthWidgetComponent } from '@home/components/widget/lib/indicator/signal-strength-widget.component';
+import { ValueChartCardWidgetComponent } from '@home/components/widget/lib/cards/value-chart-card-widget.component';
+import { ProgressBarWidgetComponent } from '@home/components/widget/lib/cards/progress-bar-widget.component';
+import { LiquidLevelWidgetComponent } from '@home/components/widget/lib/indicator/liquid-level-widget.component';
+import { DoughnutWidgetComponent } from '@home/components/widget/lib/chart/doughnut-widget.component';
+import { RangeChartWidgetComponent } from '@home/components/widget/lib/chart/range-chart-widget.component';
+import {
+  BarChartWithLabelsWidgetComponent
+} from '@home/components/widget/lib/chart/bar-chart-with-labels-widget.component';
+import { SingleSwitchWidgetComponent } from '@home/components/widget/lib/rpc/single-switch-widget.component';
+import { ActionButtonWidgetComponent } from '@home/components/widget/lib/button/action-button-widget.component';
+import { CommandButtonWidgetComponent } from '@home/components/widget/lib/button/command-button-widget.component';
+import { PowerButtonWidgetComponent } from '@home/components/widget/lib/rpc/power-button-widget.component';
+import { SliderWidgetComponent } from '@home/components/widget/lib/rpc/slider-widget.component';
+import { ToggleButtonWidgetComponent } from '@home/components/widget/lib/button/toggle-button-widget.component';
+import { TimeSeriesChartWidgetComponent } from '@home/components/widget/lib/chart/time-series-chart-widget.component';
 
 @NgModule({
   declarations:
@@ -96,7 +112,21 @@ import {
       AggregatedValueCardWidgetComponent,
       CountWidgetComponent,
       BatteryLevelWidgetComponent,
-      WindSpeedDirectionWidgetComponent
+      WindSpeedDirectionWidgetComponent,
+      SignalStrengthWidgetComponent,
+      ValueChartCardWidgetComponent,
+      ProgressBarWidgetComponent,
+      LiquidLevelWidgetComponent,
+      DoughnutWidgetComponent,
+      RangeChartWidgetComponent,
+      BarChartWithLabelsWidgetComponent,
+      SingleSwitchWidgetComponent,
+      ActionButtonWidgetComponent,
+      CommandButtonWidgetComponent,
+      PowerButtonWidgetComponent,
+      SliderWidgetComponent,
+      ToggleButtonWidgetComponent,
+      TimeSeriesChartWidgetComponent
     ],
   imports: [
     CommonModule,
@@ -136,7 +166,21 @@ import {
         AggregatedValueCardWidgetComponent,
         CountWidgetComponent,
         BatteryLevelWidgetComponent,
-        WindSpeedDirectionWidgetComponent
+        WindSpeedDirectionWidgetComponent,
+        SignalStrengthWidgetComponent,
+        ValueChartCardWidgetComponent,
+        ProgressBarWidgetComponent,
+        LiquidLevelWidgetComponent,
+        DoughnutWidgetComponent,
+        RangeChartWidgetComponent,
+        BarChartWithLabelsWidgetComponent,
+        SingleSwitchWidgetComponent,
+        ActionButtonWidgetComponent,
+        CommandButtonWidgetComponent,
+        PowerButtonWidgetComponent,
+        SliderWidgetComponent,
+        ToggleButtonWidgetComponent,
+        TimeSeriesChartWidgetComponent
     ],
   providers: [
     {provide: WIDGET_COMPONENTS_MODULE_TOKEN, useValue: WidgetComponentsModule }

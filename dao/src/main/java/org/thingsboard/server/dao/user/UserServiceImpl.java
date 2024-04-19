@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016-2023 The Thingsboard Authors
+ * Copyright © 2016-2024 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,15 @@ import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.id.TenantProfileId;
 import org.thingsboard.server.common.data.id.UserCredentialsId;
 import org.thingsboard.server.common.data.id.UserId;
+import org.thingsboard.server.common.data.mobile.MobileSessionInfo;
+import org.thingsboard.server.common.data.mobile.UserMobileInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.Authority;
 import org.thingsboard.server.common.data.security.UserCredentials;
 import org.thingsboard.server.common.data.security.event.UserCredentialsInvalidationEvent;
+import org.thingsboard.server.common.data.settings.UserSettings;
+import org.thingsboard.server.common.data.settings.UserSettingsType;
 import org.thingsboard.server.dao.entity.AbstractEntityService;
 import org.thingsboard.server.dao.entity.EntityCountService;
 import org.thingsboard.server.dao.eventsourcing.ActionEntityEvent;
@@ -52,6 +56,7 @@ import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.service.DataValidator;
 import org.thingsboard.server.dao.service.PaginatedRemover;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +75,8 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
 
     public static final String USER_PASSWORD_HISTORY = "userPasswordHistory";
 
-    private static final String LAST_LOGIN_TS = "lastLoginTs";
-    private static final String FAILED_LOGIN_ATTEMPTS = "failedLoginAttempts";
+    public static final String LAST_LOGIN_TS = "lastLoginTs";
+    public static final String FAILED_LOGIN_ATTEMPTS = "failedLoginAttempts";
 
     private static final int DEFAULT_TOKEN_LENGTH = 30;
     public static final String INCORRECT_USER_ID = "Incorrect userId ";
@@ -85,6 +90,8 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
     private final UserDao userDao;
     private final UserCredentialsDao userCredentialsDao;
     private final UserAuthSettingsDao userAuthSettingsDao;
+    private final UserSettingsService userSettingsService;
+    private final UserSettingsDao userSettingsDao;
     private final DataValidator<User> userValidator;
     private final DataValidator<UserCredentials> userCredentialsValidator;
     private final ApplicationEventPublisher eventPublisher;
@@ -126,7 +133,7 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
     @Override
     public User saveUser(TenantId tenantId, User user) {
         log.trace("Executing saveUser [{}]", user);
-        userValidator.validate(user, User::getTenantId);
+        User oldUser = userValidator.validate(user, User::getTenantId);
         if (!userLoginCaseSensitive) {
             user.setEmail(user.getEmail().toLowerCase());
         }
@@ -143,8 +150,9 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
         eventPublisher.publishEvent(SaveEntityEvent.builder()
                 .tenantId(tenantId == null ? TenantId.SYS_TENANT_ID : tenantId)
                 .entity(savedUser)
+                .oldEntity(oldUser)
                 .entityId(savedUser.getId())
-                .added(user.getId() == null).build());
+                .created(user.getId() == null).build());
         return savedUser;
     }
 
@@ -252,10 +260,10 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
         UserId userId = user.getId();
         log.trace("[{}] Executing deleteUser [{}]", tenantId, userId);
         validateId(userId, INCORRECT_USER_ID + userId);
-        UserCredentials userCredentials = userCredentialsDao.findByUserId(tenantId, userId.getId());
-        userCredentialsDao.removeById(tenantId, userCredentials.getUuidId());
+        userCredentialsDao.removeByUserId(tenantId, userId);
         userAuthSettingsDao.removeByUserId(userId);
         deleteEntityRelations(tenantId, userId);
+
         userDao.removeById(tenantId, userId.getId());
         eventPublisher.publishEvent(new UserCredentialsInvalidationEvent(userId));
         countService.publishCountEntityEvictEvent(tenantId, EntityType.USER);
@@ -391,6 +399,42 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
     }
 
     @Override
+    public void saveMobileSession(TenantId tenantId, UserId userId, String mobileToken, MobileSessionInfo sessionInfo) {
+        removeMobileSession(tenantId, mobileToken); // unassigning fcm token from other users, in case we didn't clean up it on log out or mobile app uninstall
+
+        UserMobileInfo mobileInfo = findMobileInfo(tenantId, userId).orElseGet(() -> {
+            UserMobileInfo newMobileInfo = new UserMobileInfo();
+            newMobileInfo.setSessions(new HashMap<>());
+            return newMobileInfo;
+        });
+        mobileInfo.getSessions().put(mobileToken, sessionInfo);
+        userSettingsService.updateUserSettings(tenantId, userId, UserSettingsType.MOBILE, JacksonUtil.valueToTree(mobileInfo));
+    }
+
+    @Override
+    public Map<String, MobileSessionInfo> findMobileSessions(TenantId tenantId, UserId userId) {
+        return findMobileInfo(tenantId, userId).map(UserMobileInfo::getSessions).orElse(Collections.emptyMap());
+    }
+
+    @Override
+    public MobileSessionInfo findMobileSession(TenantId tenantId, UserId userId, String mobileToken) {
+        return findMobileInfo(tenantId, userId).map(mobileInfo -> mobileInfo.getSessions().get(mobileToken)).orElse(null);
+    }
+
+    @Override
+    public void removeMobileSession(TenantId tenantId, String mobileToken) {
+        for (UserSettings userSettings : userSettingsDao.findByTypeAndPath(tenantId, UserSettingsType.MOBILE, "sessions", mobileToken)) {
+            ((ObjectNode) userSettings.getSettings().get("sessions")).remove(mobileToken);
+            userSettingsService.saveUserSettings(tenantId, userSettings);
+        }
+    }
+
+    private Optional<UserMobileInfo> findMobileInfo(TenantId tenantId, UserId userId) {
+        return Optional.ofNullable(userSettingsService.findUserSettings(tenantId, userId, UserSettingsType.MOBILE))
+                .map(UserSettings::getSettings).map(settings -> JacksonUtil.treeToValue(settings, UserMobileInfo.class));
+    }
+
+    @Override
     public int increaseFailedLoginAttempts(TenantId tenantId, UserId userId) {
         log.trace("Executing onUserLoginIncorrectCredentials [{}]", userId);
         User user = findUserById(tenantId, userId);
@@ -446,8 +490,8 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
         }
 
         @Override
-        protected void removeEntity(TenantId tenantId, User entity) {
-            deleteUser(tenantId, entity);
+        protected void removeEntity(TenantId tenantId, User user) {
+            deleteUser(tenantId, user);
         }
     };
 

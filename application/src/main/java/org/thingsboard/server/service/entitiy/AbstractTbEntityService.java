@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016-2023 The Thingsboard Authors
+ * Copyright © 2016-2024 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.springframework.context.annotation.Lazy;
 import org.thingsboard.server.cluster.TbClusterService;
 import org.thingsboard.server.common.data.EntityType;
 import org.thingsboard.server.common.data.User;
-import org.thingsboard.server.common.data.alarm.AlarmInfo;
-import org.thingsboard.server.common.data.alarm.AlarmQuery;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
 import org.thingsboard.server.common.data.id.AlarmId;
@@ -46,7 +44,6 @@ import org.thingsboard.server.service.telemetry.AlarmSubscriptionService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AbstractTbEntityService {
@@ -63,26 +60,22 @@ public abstract class AbstractTbEntityService {
     protected EdgeService edgeService;
     @Autowired
     protected AlarmService alarmService;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     protected AlarmSubscriptionService alarmSubscriptionService;
     @Autowired
     protected CustomerService customerService;
     @Autowired
     protected TbClusterService tbClusterService;
-    @Autowired(required = false) @Lazy
+    @Autowired(required = false)
+    @Lazy
     private EntitiesVersionControlService vcService;
 
-    protected ListenableFuture<Void> removeAlarmsByEntityId(TenantId tenantId, EntityId entityId) {
-        ListenableFuture<PageData<AlarmInfo>> alarmsFuture =
-                alarmService.findAlarms(tenantId, new AlarmQuery(entityId, new TimePageLink(Integer.MAX_VALUE), null, null, null, false));
+    protected void removeAlarmsByOriginatorId(TenantId tenantId, EntityId entityId) {
+        PageData<AlarmId> alarms =
+                alarmService.findAlarmIdsByOriginatorId(tenantId, entityId, new TimePageLink(Integer.MAX_VALUE));
 
-        ListenableFuture<List<AlarmId>> alarmIdsFuture = Futures.transform(alarmsFuture, page ->
-                page.getData().stream().map(AlarmInfo::getId).collect(Collectors.toList()), dbExecutor);
-
-        return Futures.transform(alarmIdsFuture, ids -> {
-            ids.stream().map(alarmId -> alarmService.deleteAlarm(tenantId, alarmId)).collect(Collectors.toList());
-            return null;
-        }, dbExecutor);
+        alarms.getData().forEach(alarmId -> alarmService.delAlarm(tenantId, alarmId));
     }
 
     protected <T> T checkNotNull(T reference) throws ThingsboardException {
