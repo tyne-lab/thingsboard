@@ -28,6 +28,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AppState } from "@app/core/core.state";
 import { AttributeService, TimeService } from "@app/core/public-api";
+import { ImportExportService } from "@app/shared/import-export/import-export.service";
 import {
   AggregationType,
   DataSortOrder,
@@ -37,7 +38,6 @@ import {
 } from "@app/shared/public-api";
 import { Store } from "@ngrx/store";
 import moment from "moment";
-import { ImportExportService } from "../../components/import-export/import-export.service";
 
 export interface DeviceDownloadTelemetryDataDialogData {
   deviceId: string;
@@ -71,7 +71,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
     @Inject(MAT_DIALOG_DATA) public data: DeviceDownloadTelemetryDataDialogData,
     @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
     private attributeService: AttributeService,
-    private importExport: ImportExportService,
+    private importExportService: ImportExportService,
     public dialogRef: MatDialogRef<DeviceDownloadTelemetryDataDialogComponent,void>,
     public fb: UntypedFormBuilder,
     private timeService: TimeService,
@@ -139,7 +139,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
         DataSortOrder.ASC
       )
       .subscribe((data) => {
-        this.importExport.exportDevicesTelemetryData(
+        this.importExportService.exportDevicesTelemetryData(
           `${this.data.name}_from_${moment(startTimeMs).format(
             "YYYYMMDD_HHmmss"
           )}_to_${moment(endTimeMs).format("YYYYMMDD_HHmmss")}`,

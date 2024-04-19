@@ -28,6 +28,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AppState } from "@app/core/core.state";
 import { AttributeService, TimeService } from "@app/core/public-api";
+import { ImportExportService } from "@app/shared/import-export/import-export.service";
 import {
   AggregationType,
   DAY,
@@ -40,7 +41,6 @@ import {
 } from "@app/shared/public-api";
 import { Store } from "@ngrx/store";
 import moment from "moment";
-import { ImportExportService } from "../import-export/import-export.service";
 
 export interface DashboardDownloadDevicesTelemetryDialogData {
   dashboardName: string;
@@ -81,7 +81,7 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
 
   constructor(
     private attributeService: AttributeService,
-    private importExport: ImportExportService,
+    private importExportService: ImportExportService,
     @Inject(MAT_DIALOG_DATA)
     public data: DashboardDownloadDevicesTelemetryDialogData,
     @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
@@ -165,7 +165,7 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
       )
     );
 
-    this.importExport.exportDevicesTelemetryData(
+    this.importExportService.exportDevicesTelemetryData(
       `${this.data.dashboardName}_from_${moment(startTimeMs).format(
         "YYYYMMDD_HHmmss"
       )}_to_${moment(endTimeMs).format("YYYYMMDD_HHmmss")}`,
