@@ -49,3 +49,5 @@ rebuild-docker.sh
 */.run/**
 .run/**
 .run
+
+docker-compose.yml
