@@ -30,10 +30,6 @@ logs/
 #data
 data/
 
-# env
-**/.env
-**/*.env
-
 *.toDelete
 *~
 *.iml

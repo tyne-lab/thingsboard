@@ -57,16 +57,8 @@
               <tb-datetime-period
                 formControlName="fixedTimewindow"
                 class="history-time-input"
-                [fxShow]="
-                  downloadDeviceTelemetriesFormGroup.get(
-                  'timeRange.timeRangeType'
-                  ).value === DownloadTimeRangeType.FIXED
-                "
-                [required]="
-                  downloadDeviceTelemetriesFormGroup.get(
-                  'timeRange.timeRangeType'
-                  ).value === DownloadTimeRangeType.FIXED
-                "
+                [fxShow]="downloadDeviceTelemetriesFormGroup.get('timeRange.timeRangeType').value === DownloadTimeRangeType.FIXED"
+                [required]="downloadDeviceTelemetriesFormGroup.get('timeRange.timeRangeType').value === DownloadTimeRangeType.FIXED"
                 style="padding-top: 8px"
               ></tb-datetime-period>
             </section>
@@ -80,22 +72,32 @@
               <tb-quick-time-interval
                 formControlName="quickInterval"
                 class="history-time-input"
-                [fxShow]="
-                  downloadDeviceTelemetriesFormGroup.get(
-                  'timeRange.timeRangeType'
-                  ).value === DownloadTimeRangeType.INTERVAL
-                "
-                [required]="
-                  downloadDeviceTelemetriesFormGroup.get(
-                  'timeRange.timeRangeType'
-                  ).value === DownloadTimeRangeType.INTERVAL
-                "
+                [fxShow]="downloadDeviceTelemetriesFormGroup.get('timeRange.timeRangeType').value === DownloadTimeRangeType.INTERVAL"
+                [required]="downloadDeviceTelemetriesFormGroup.get('timeRange.timeRangeType').value === DownloadTimeRangeType.INTERVAL"
                 style="padding-top: 8px"
               ></tb-quick-time-interval>
             </section>
           </mat-radio-button>
         </mat-radio-group>
       </div>
+
+      <section fxFlex fxLayout="column">
+        <mat-form-field>
+          <mat-label translate>aggregation.function</mat-label>
+          <mat-select formControlName="aggregation" style="min-width: 150px;">
+            <mat-option *ngFor="let aggregation of aggregations" [value]="aggregation">
+              {{ aggregationTypesTranslations.get(aggregationTypes[aggregation]) | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <tb-timeinterval
+        formControlName="interval"
+        [fxShow]="downloadDeviceTelemetriesFormGroup.get('aggregation').value !== aggregationTypes.NONE"
+        [min]="minAggInterval()" [max]="maxAggInterval()"
+        predefinedName="aggregation.group-interval">
+      </tb-timeinterval>
 
       <mat-form-field
         fxFlex
