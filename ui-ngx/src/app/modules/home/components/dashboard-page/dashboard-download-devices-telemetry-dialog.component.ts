@@ -30,10 +30,13 @@ import { AppState } from "@app/core/core.state";
 import { AttributeService, TimeService } from "@app/core/public-api";
 import {
   AggregationType,
+  DAY,
   DataSortOrder,
   DialogComponent,
   EntityType,
+  aggregationTranslations,
   calculateIntervalStartEndTime,
+  quickTimeIntervalPeriod,
 } from "@app/shared/public-api";
 import { Store } from "@ngrx/store";
 import moment from "moment";
@@ -74,6 +77,7 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
 
   aggregationTypes = AggregationType;
   aggregations = Object.keys(AggregationType);
+  aggregationTypesTranslations = aggregationTranslations;
 
   constructor(
     private attributeService: AttributeService,
@@ -83,10 +87,7 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
     @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
     protected store: Store<AppState>,
     protected router: Router,
-    public dialogRef: MatDialogRef<
-    DashboardDownloadDevicesTelemetryDialogComponent,
-      void
-    >,
+    public dialogRef: MatDialogRef<DashboardDownloadDevicesTelemetryDialogComponent, void>,
     public fb: UntypedFormBuilder,
     private timeService: TimeService,
   ) {
@@ -108,14 +109,8 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
     });
   }
 
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    const originalErrorState = this.errorStateMatcher.isErrorState(
-      control,
-      form
-    );
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const originalErrorState = this.errorStateMatcher.isErrorState(control, form);
     const customErrorState = !!(control && control.invalid);
     return originalErrorState || customErrorState;
   }
@@ -125,16 +120,9 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
   }
 
   async download() {
-    let startTimeMs =
-      this.downloadDeviceTelemetriesFormGroup.value.timeRange?.fixedTimewindow
-        ?.startTimeMs;
-    let endTimeMs =
-      this.downloadDeviceTelemetriesFormGroup.value.timeRange?.fixedTimewindow
-        ?.endTimeMs;
-    if (
-      this.downloadDeviceTelemetriesFormGroup.value.timeRange?.timeRangeType ===
-      DownloadTimeRangeType.INTERVAL
-    ) {
+    let startTimeMs = this.downloadDeviceTelemetriesFormGroup.value.timeRange?.fixedTimewindow?.startTimeMs;
+    let endTimeMs = this.downloadDeviceTelemetriesFormGroup.value.timeRange?.fixedTimewindow?.endTimeMs;
+    if (this.downloadDeviceTelemetriesFormGroup.value.timeRange?.timeRangeType === DownloadTimeRangeType.INTERVAL) {
       const startEndTime = calculateIntervalStartEndTime(
         this.downloadDeviceTelemetriesFormGroup.value.timeRange?.quickInterval,
         this.downloadDeviceTelemetriesFormGroup.value.timezone
@@ -148,12 +136,11 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
     const keysOfDevices = await Promise.all(
       this.downloadDeviceTelemetriesFormGroup.value.deviceIds.map(
         (deviceId: string) =>
-          this.attributeService
-            .getEntityTimeSeriesKeys({
-              entityType: EntityType.DEVICE,
-              id: deviceId,
-            })
-            .toPromise()
+          this.attributeService.getEntityTimeSeriesKeys({
+            entityType: EntityType.DEVICE,
+            id: deviceId,
+          })
+          .toPromise()
       )
     );
 
@@ -161,21 +148,19 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
       this.downloadDeviceTelemetriesFormGroup.value.deviceIds.map(
         (deviceId: string, index: number) =>
           keysOfDevices[index].length
-            ? this.attributeService
-                .getEntityTimeseries(
-                  {
-                    entityType: EntityType.DEVICE,
-                    id: deviceId,
-                  },
-                  keysOfDevices[index],
-                  startTimeMs,
-                  endTimeMs,
-                  this.downloadDeviceTelemetriesFormGroup.value.limit,
-                  this.downloadDeviceTelemetriesFormGroup.value.aggregation,
-                  undefined,
-                  DataSortOrder.ASC
-                )
-                .toPromise()
+            ? this.attributeService.getEntityTimeseries(
+                { entityType: EntityType.DEVICE, id: deviceId },
+                keysOfDevices[index],
+                startTimeMs,
+                endTimeMs,
+                this.downloadDeviceTelemetriesFormGroup.value.limit,
+                this.downloadDeviceTelemetriesFormGroup.value.aggregation,
+                this.downloadDeviceTelemetriesFormGroup.value.aggregation === AggregationType.NONE
+                  ? undefined
+                  : this.downloadDeviceTelemetriesFormGroup.value.interval,
+                DataSortOrder.ASC
+              )
+              .toPromise()
             : {}
       )
     );
@@ -197,21 +182,21 @@ export class DashboardDownloadDevicesTelemetryDialogComponent
     this.cancel();
   }
 
-  minRealtimeAggInterval() {
-    return this.timeService.minIntervalLimit(this.currentRealtimeTimewindow());
+  minAggInterval() {
+    return this.timeService.minIntervalLimit(this.currentTimewindow());
   }
 
-  maxRealtimeAggInterval() {
-    return this.timeService.maxIntervalLimit(this.currentRealtimeTimewindow());
+  maxAggInterval() {
+    return this.timeService.maxIntervalLimit(this.currentTimewindow());
   }
 
-  currentRealtimeTimewindow(): number {
-    const timeWindowFormValue = this.timewindowForm.getRawValue();
-    switch (timeWindowFormValue.realtime.realtimeType) {
-      case RealtimeWindowType.LAST_INTERVAL:
-        return timeWindowFormValue.realtime.timewindowMs;
-      case RealtimeWindowType.INTERVAL:
-        return quickTimeIntervalPeriod(timeWindowFormValue.realtime.quickInterval);
+  currentTimewindow(): number {
+    const timeRangeFormValue = this.downloadDeviceTelemetriesFormGroup.value.timeRange;
+    switch (timeRangeFormValue.timeRangeType) {
+      case DownloadTimeRangeType.FIXED:
+        return timeRangeFormValue.fixedTimewindow.endTimeMs - timeRangeFormValue.fixedTimewindow.startTimeMs;
+      case DownloadTimeRangeType.INTERVAL:
+        return quickTimeIntervalPeriod(timeRangeFormValue.quickInterval);
       default:
         return DAY;
     }

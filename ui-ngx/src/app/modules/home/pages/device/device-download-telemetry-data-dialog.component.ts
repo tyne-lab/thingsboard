@@ -27,12 +27,13 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AppState } from "@app/core/core.state";
-import { AttributeService } from "@app/core/public-api";
+import { AttributeService, TimeService } from "@app/core/public-api";
 import {
   AggregationType,
   DataSortOrder,
   DialogComponent,
   EntityType,
+  aggregationTranslations,
 } from "@app/shared/public-api";
 import { Store } from "@ngrx/store";
 import moment from "moment";
@@ -60,7 +61,9 @@ export class DeviceDownloadTelemetryDataDialogComponent
   downloadTelemetryFormGroup: UntypedFormGroup;
   loading = true;
   
+  aggregationTypes = AggregationType;
   aggregations = Object.keys(AggregationType);
+  aggregationTypesTranslations = aggregationTranslations;
 
   constructor(
     protected store: Store<AppState>,
@@ -69,11 +72,9 @@ export class DeviceDownloadTelemetryDataDialogComponent
     @SkipSelf() private errorStateMatcher: ErrorStateMatcher,
     private attributeService: AttributeService,
     private importExport: ImportExportService,
-    public dialogRef: MatDialogRef<
-      DeviceDownloadTelemetryDataDialogComponent,
-      void
-    >,
-    public fb: UntypedFormBuilder
+    public dialogRef: MatDialogRef<DeviceDownloadTelemetryDataDialogComponent,void>,
+    public fb: UntypedFormBuilder,
+    private timeService: TimeService,
   ) {
     super(store, router, dialogRef);
   }
@@ -83,6 +84,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
       keys: [null],
       timeRange: [null, [Validators.required]],
       aggregation: [AggregationType.NONE, [Validators.required]],
+      interval: [null],
       timezone: [null, [Validators.required]],
       limit: [100, [Validators.min(1)]],
     });
@@ -103,14 +105,8 @@ export class DeviceDownloadTelemetryDataDialogComponent
       });
   }
 
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    const originalErrorState = this.errorStateMatcher.isErrorState(
-      control,
-      form
-    );
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const originalErrorState = this.errorStateMatcher.isErrorState(control, form);
     const customErrorState = !!(control && control.invalid);
     return originalErrorState || customErrorState;
   }
@@ -120,24 +116,26 @@ export class DeviceDownloadTelemetryDataDialogComponent
   }
 
   download(): void {
-    const startTimeMs =
-      this.downloadTelemetryFormGroup.value.timeRange?.startTimeMs;
-    const endTimeMs =
-      this.downloadTelemetryFormGroup.value.timeRange?.endTimeMs;
+    const formValue = this.downloadTelemetryFormGroup.getRawValue();
+    const keys = formValue.keys;
+    const startTimeMs = formValue.timeRange.startTimeMs;
+    const endTimeMs = formValue.timeRange.endTimeMs;
+    const aggregation = formValue.aggregation;
+    const interval = formValue.interval;
+    const limit = formValue.limit;
     this.loading = true;
 
     this.attributeService
       .getEntityTimeseries(
-        {
-          entityType: EntityType.DEVICE,
-          id: this.data.deviceId,
-        },
-        this.downloadTelemetryFormGroup.value.keys,
+        { entityType: EntityType.DEVICE, id: this.data.deviceId },
+        keys,
         startTimeMs,
         endTimeMs,
-        this.downloadTelemetryFormGroup.value.limit,
-        this.downloadTelemetryFormGroup.value.aggregation,
-        undefined,
+        limit,
+        aggregation,
+        aggregation === AggregationType.NONE
+          ? undefined
+          : interval,
         DataSortOrder.ASC
       )
       .subscribe((data) => {
@@ -148,7 +146,7 @@ export class DeviceDownloadTelemetryDataDialogComponent
           [
             {
               name: this.data.name,
-              keys: this.downloadTelemetryFormGroup.value.keys,
+              keys: keys,
               data,
             },
           ]
@@ -156,5 +154,18 @@ export class DeviceDownloadTelemetryDataDialogComponent
         this.loading = false;
         this.cancel();
       });
+  }
+
+  minAggInterval() {
+    return this.timeService.minIntervalLimit(this.currentTimewindow());
+  }
+
+  maxAggInterval() {
+    return this.timeService.maxIntervalLimit(this.currentTimewindow());
+  }
+
+  currentTimewindow(): number {
+    const timeRangeFormValue = this.downloadTelemetryFormGroup.value.timeRange;
+    return timeRangeFormValue.endTimeMs - timeRangeFormValue.startTimeMs;
   }
 }

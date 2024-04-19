@@ -37,16 +37,21 @@
       <span>{{ "timewindow.time-period" | translate }}</span>
       <tb-datetime-period formControlName="timeRange"> </tb-datetime-period>
 
-      <section>
-        <mat-form-field>
-          <mat-label translate>aggregation.function</mat-label>
-          <mat-select formControlName="aggregation" style="min-width: 150px;">
-            <mat-option *ngFor="let aggregation of aggregations" [value]="aggregation">
-              {{ aggregationTypesTranslations.get(aggregationTypes[aggregation]) | translate }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </section>
+      <mat-form-field>
+        <mat-label translate>aggregation.function</mat-label>
+        <mat-select formControlName="aggregation" style="min-width: 150px;">
+          <mat-option *ngFor="let aggregation of aggregations" [value]="aggregation">
+            {{ aggregationTypesTranslations.get(aggregationTypes[aggregation]) | translate }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <tb-timeinterval
+        formControlName="interval"
+        [fxShow]="downloadTelemetryFormGroup.get('aggregation').value !== aggregationTypes.NONE"
+        [min]="minAggInterval()" [max]="maxAggInterval()"
+        predefinedName="aggregation.group-interval">
+      </tb-timeinterval>
 
       <mat-form-field
         fxFlex
