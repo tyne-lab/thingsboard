@@ -16,7 +16,7 @@
 
 services:
   postgres:
-    image: postgres:18
+    image: postgres:16
     container_name: thingsboard-postgres
     restart: unless-stopped
     ports:
